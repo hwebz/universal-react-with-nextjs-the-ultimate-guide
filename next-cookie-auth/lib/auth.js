@@ -1,9 +1,15 @@
 import axios from 'axios';
 
-export const loginUser = async (email, password) => {
-    const { data } = await axios.post('/api/login', {
+// Require cookie
+axios.defaults.withCredentials = true;
+
+export const loginUser = (email, password) => {
+    return axios.post('/api/login', {
         email,
         password
     });
-    console.log(data);
+}
+
+export const getUserProfile = () => {
+    return axios.get('/api/profile');
 }
