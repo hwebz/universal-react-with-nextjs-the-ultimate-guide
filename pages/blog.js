@@ -10,7 +10,7 @@ const PostLinks = ({ title, slug }) => (
 )
 
 const Blog = () => (
-    <Layout title="My Blog">
+    <Layout title="My Blog Posts">
         <ul>
             <PostLinks title="React" slug="react-post" />
             <PostLinks title="Angular" slug="angular-post" />
