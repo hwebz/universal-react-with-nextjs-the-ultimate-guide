@@ -9,3 +9,7 @@
 - Integrate your github repo
 - Deploy your app at the first time
 - Vercel auto-deploy will be triggered after each commit pushed to repo.
+
+## Deploying Hacker Next with Heroku
+- Create an app on Heroku
+- Login and push your code to heroku master
