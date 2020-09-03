@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "next"
+    "start": "next",
+    "build": "next build",
+    "export": "next export",
+    "deploy": "cd out && vercel"
   },
   "keywords": [],
   "author": "",
