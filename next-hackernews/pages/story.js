@@ -26,7 +26,7 @@ class Story extends React.Component {
         }
 
         return (
-            <Layout title={story.title}>
+            <Layout title={story.title} backButton={true}>
                 <main>
                     <h1 className="story-title">
                         <a href={story.url}>{story.title}</a>
@@ -35,13 +35,12 @@ class Story extends React.Component {
                         <strong>{story.points || 0} points</strong>
                         <strong>{story.comments_count} comments</strong>
                         <strong>{story.time_ago}</strong>
-
-                        {story.comments.length > 0 ? (
-                            <CommentList comments={story.comments} />
-                        ) : (
-                            <div>No comments for this story</div>
-                        )}
                     </div>
+                    {story.comments.length > 0 ? (
+                        <CommentList comments={story.comments} />
+                    ) : (
+                        <div>No comments for this story</div>
+                    )}
                 </main>
 
                 <style jsx>{`
