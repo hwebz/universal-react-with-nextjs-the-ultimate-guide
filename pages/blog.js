@@ -3,7 +3,9 @@ import Link from 'next/link';
 
 const PostLinks = ({ title, slug }) => (
     <li>
-        <Link as={slug} href={`/post?title=${title}`}>
+        {/* Slug will enable dynamic route rendering, which if we refresh the page then it will 404 */}
+        {/* <Link as={slug} href={`/post?title=${title}`}> */}
+        <Link href={`/post?title=${title}`}>
             <a>{title}</a>
         </Link>
     </li>
