@@ -22,7 +22,7 @@ export const getUserProfile = async () => {
 
 export const getServerSideToken = req => {
     if (!req) return {};
-    
+
     const { signedCookies = {}} = req;
 
     if (!signedCookies || (signedCookies && !signedCookies.token)) {
@@ -34,4 +34,18 @@ export const getServerSideToken = req => {
 
 export const getUserScript = user => {
     return `${WINDOW_USER_SCRIPT_VARIABLE} = ${JSON.stringify(user)}`;
+}
+
+export const authInitialProps = () => ({ req }) => {
+    const auth = req ? getServerSideToken(req) : getClientSideToken();
+    return { auth };
+}
+
+export const getClientSideToken = () => {
+    if (typeof window !== 'undefined') {
+        const user = window[WINDOW_USER_SCRIPT_VARIABLE] || {};
+        return { user };
+    }
+
+    return { user: {} };
 }
