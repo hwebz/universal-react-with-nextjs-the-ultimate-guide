@@ -11,6 +11,8 @@ class Profile extends React.Component {
         getUserProfile()
             .then(user => {
                 this.setState({ user });
+            }).catch(err => {
+                console.log(err);
             });
     }
 
@@ -25,6 +27,6 @@ class Profile extends React.Component {
     }
 }
 
-Profile.getInitialProps = authInitialProps();
+Profile.getInitialProps = authInitialProps(true);
 
 export default Profile;
