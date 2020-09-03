@@ -1,12 +1,10 @@
 import Link from 'next/link';
+import Layout from '../components/layout';
 
 const About = () => (
-    <div>
-        <h1>About</h1>
-        <Link href="/">
-            Home
-        </Link>
-    </div>
+    <Layout title="Hire Me">
+        <p>About page</p>
+    </Layout>
 );
 
 export default About;
