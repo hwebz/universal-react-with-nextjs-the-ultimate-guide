@@ -7,11 +7,11 @@ class MyDocument extends Document {
         const props = await Document.getInitialProps(ctx);
         const userData = await getServerSideToken(ctx.req);
 
-        return { ...props, ...userData };
+        return { ...props, userData };
     }
 
     render() {
-        const { user = {} } = this.props;
+        const { userData = {} } = this.props;
         return (
             <Html>
                 <Head>
@@ -20,7 +20,7 @@ class MyDocument extends Document {
                 <body>
                     <Main />
 
-                    <script dangerouslySetInnerHTML={{ __html: getUserScript(user) }} />
+                    <script dangerouslySetInnerHTML={{ __html: getUserScript(userData) }} />
 
                     <NextScript />
                 </body>

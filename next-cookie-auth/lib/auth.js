@@ -23,13 +23,12 @@ export const getUserProfile = async () => {
 
 export const getServerSideToken = req => {
     if (!req) return {};
-
     const { signedCookies = {}} = req;
 
     if (!signedCookies || (signedCookies && !signedCookies.token)) {
         return {};
     } else {
-        return signedCookies;
+        return signedCookies.token;
     }
 };
 
@@ -38,7 +37,9 @@ export const getUserScript = user => {
 };
 
 export const authInitialProps = isProtectedRoute => ({ req, res }) => {
-    const auth = req ? getServerSideToken(req) : getClientSideToken();
+    const auth = req ? {
+        user: getServerSideToken(req)
+    } : getClientSideToken();
     const currentPath = req ? req.url : window.location.pathname;
     const user = auth.user;
     const isAnonymous = !user || user.type !== 'authenticated';
@@ -46,6 +47,11 @@ export const authInitialProps = isProtectedRoute => ({ req, res }) => {
     if (isProtectedRoute && isAnonymous && currentPath !== '/login') {
         return redirectUser(res, '/login');
     }
+
+    if (user && currentPath === '/login') {
+        return redirectUser(res, '/profile');
+    }
+    
     return { auth };
 };
 
