@@ -6,7 +6,7 @@ import Error from './_error';
 class About extends Component {
     
     static async getInitialProps() {
-        const res = await fetch('https://api.github.com/users/hwebzfawefe');
+        const res = await fetch('https://api.github.com/users/hwebz');
         const statusCode = res.status > 200 ? res.status : false;
         const data = await res.json();
 
