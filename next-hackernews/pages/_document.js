@@ -1,9 +1,9 @@
-import Document, { Head, Main, NextScript } from 'next/document';
+import Document, { Html, Head, Main, NextScript } from 'next/document';
 
 class MyDocument extends Document {
     render() {
         return (
-            <html lang="en-US">
+            <Html lang="en-US">
                 <Head>
                     <link rel="manifest" href="/static/manifest.json" />
 
@@ -26,7 +26,7 @@ class MyDocument extends Document {
                     <Main />
                     <NextScript />
                 </body>
-            </html>
+            </Html>
         )
     }
 }
