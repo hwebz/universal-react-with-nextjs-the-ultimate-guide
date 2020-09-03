@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Router from 'next/router';
 
 // Require cookie
 axios.defaults.withCredentials = true;
@@ -13,12 +14,12 @@ export const loginUser = async (email, password) => {
     if (typeof window !== 'undefined') {
         window[WINDOW_USER_SCRIPT_VARIABLE] = data || {};
     }
-}
+};
 
 export const getUserProfile = async () => {
     const { data } = await axios.get('/api/profile');
     return data;
-}
+};
 
 export const getServerSideToken = req => {
     if (!req) return {};
@@ -30,16 +31,16 @@ export const getServerSideToken = req => {
     } else {
         return signedCookies;
     }
-}
+};
 
 export const getUserScript = user => {
     return `${WINDOW_USER_SCRIPT_VARIABLE} = ${JSON.stringify(user)}`;
-}
+};
 
 export const authInitialProps = () => ({ req }) => {
     const auth = req ? getServerSideToken(req) : getClientSideToken();
     return { auth };
-}
+};
 
 export const getClientSideToken = () => {
     if (typeof window !== 'undefined') {
@@ -48,4 +49,13 @@ export const getClientSideToken = () => {
     }
 
     return { user: {} };
-}
+};
+
+export const logoutUser = async () => {
+    if (typeof window !== 'undefined') {
+        window[WINDOW_USER_SCRIPT_VARIABLE] = {};
+    }
+
+    await axios.post('/api/logout');
+    Router.push('/login');
+};

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { logoutUser } from '../lib/auth';
 
 const Layout = ({ auth, title, children }) => {
     const { user = {} } = auth || {};
@@ -17,7 +18,7 @@ const Layout = ({ auth, title, children }) => {
                             <Link href="/profile">
                                 <a>Profile</a>
                             </Link>
-                            <button>Logout</button>
+                            <button onClick={logoutUser}>Logout</button>
                         </>
                     ) : (
                         <Link href="/login">
