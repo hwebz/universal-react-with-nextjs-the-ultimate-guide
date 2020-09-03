@@ -1,7 +1,27 @@
 import Link from 'next/link';
+import Head from 'next/head';
+import Router from 'next/router';
+import NProgress from 'nprogress';
 
-export default ({ title, children }) => (
+Router.onRouteChangeStart = url => {
+    console.log(url);
+    NProgress.start();
+}
+
+Router.onRouteChangeComplete = () => {
+    NProgress.done();
+}
+
+Router.onRouteChangeError = () => {
+    NProgress.done();
+}
+
+const Layout = ({ title, children }) => (
     <div className="root">
+        <Head>
+            <title>Next.js Project</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.css" />
+        </Head>
         <header>
             <Link href="/">
                 <a>Home</a>
@@ -32,7 +52,7 @@ export default ({ title, children }) => (
             header {
                 display: flex;
                 justify-content: space-around;
-                padding: 1em;
+                padding: 1em 0;
                 font-size: 1.2em;
                 background: indigo;
                 width: 100%;
@@ -53,10 +73,6 @@ export default ({ title, children }) => (
             }
         `}</style>
         <style global jsx>{`
-            * {
-                box-sizing: content-box;
-            }
-
             body {
                 margin: 0;
                 font-size: 110%;
@@ -65,3 +81,5 @@ export default ({ title, children }) => (
         `}</style>
     </div>
 );
+
+export default Layout;
