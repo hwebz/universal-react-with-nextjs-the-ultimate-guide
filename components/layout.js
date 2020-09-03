@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Head from 'next/head';
 import Router from 'next/router';
 import NProgress from 'nprogress';
 
@@ -18,10 +17,6 @@ Router.onRouteChangeError = () => {
 
 const Layout = ({ title, children }) => (
     <div className="root">
-        <Head>
-            <title>Next.js Project</title>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.css" />
-        </Head>
         <header>
             <Link href="/">
                 <a>Home</a>
