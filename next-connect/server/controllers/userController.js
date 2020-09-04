@@ -69,14 +69,31 @@ exports.addFollowing = async (req, res, next) => {
 exports.addFollower = async (req, res) => {
     const { followId } = req.body;
 
-    await User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
         { _id: followId },
         { $push: { followers: req.user._id }},
         { new: true }
     )
-    res.json(req.user);
+    res.json(user);
 };
 
-exports.deleteFollowing = () => {};
+exports.deleteFollowing = async (req, res, next) => {
+    const { followId } = req.body;
 
-exports.deleteFollower = () => {};
+    await User.findOneAndUpdate(
+        { _id: req.user._id },
+        { $pull: { following: followId } }
+    )
+    next();
+};
+
+exports.deleteFollower = async (req, res) => {
+    const { followId } = req.body;
+
+    const user = await User.findOneAndUpdate(
+        { _id: followId },
+        { $pull: { followers: req.user._id }},
+        { new: true }
+    )
+    res.json(user);
+};
