@@ -117,7 +117,15 @@ router.post(
   catchErrors(postController.resizeImage),
   catchErrors(postController.addPost)
 );
-router.get("/api/posts/by/:userId", catchErrors(postController.getPostsByUser));
-router.get("/api/posts/feed/:userId", catchErrors(postController.getPostFeed));
+router.get(
+  "/api/posts/by/:userId",
+  authController.checkAuth,
+  catchErrors(postController.getPostsByUser)
+);
+router.get(
+  "/api/posts/feed/:userId",
+  authController.checkAuth,
+  catchErrors(postController.getPostFeed)
+);
 
 module.exports = router;
