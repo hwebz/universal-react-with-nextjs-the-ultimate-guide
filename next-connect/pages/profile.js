@@ -12,12 +12,84 @@ import Divider from "@material-ui/core/Divider";
 import Edit from "@material-ui/icons/Edit";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { authInitialProps } from "../lib/auth";
+import { getUser } from '../lib/api';
+import Link from 'next/link';
 
 class Profile extends React.Component {
-  state = {};
+  state = {
+    user: null,
+    isAuth: false,
+    isLoading: true
+  };
+
+  componentDidMount() {
+    const { userId, auth } = this.props;
+    const isAuth = auth.user._id === userId;
+
+    getUser(userId)
+      .then(user => {
+        this.setState({
+          user,
+          isAuth,
+          isLoading: false
+        })
+      });
+  }
 
   render() {
-    return <div>Profile</div>;
+    const { classes } = this.props;
+    const { isLoading, user, isAuth } = this.state;
+
+    return <div>
+      <Paper className={classes.root} elevation={4}>
+        <Typography
+          variant="h4"
+          component="h1"
+          align="center"
+          className={classes.title}
+          gutterBottom
+        >          
+          Profile
+        </Typography>
+        {isLoading ? (
+          <div className={classes.progressContainer}>
+            <CircularProgress
+              className={classes.progress}
+              size={55}
+              thickness={5}
+            />
+          </div>
+        ) : (
+          <List dense>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar src={user.avatar} className={classes.bigAvatar} />
+              </ListItemAvatar>
+              <ListItemText primary={user.name} secondary={user.email} />
+
+              {/* Auth - Edit Buttons / UnAuth - Follow Buttons */}
+              {isAuth ? (
+                <ListItemSecondaryAction>
+                  <Link href="/edit-profile">
+                    <a>
+                      <IconButton color="primary">
+                        <Edit />
+                      </IconButton>
+                    </a>
+                  </Link>
+                </ListItemSecondaryAction>
+              ) : (
+                <div>Follow</div>
+              )}
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText primary={user.about} secondary={`Joined: ${user.createdAt}`} />
+            </ListItem>
+          </List>
+        )}
+      </Paper>
+    </div>;
   }
 }
 
