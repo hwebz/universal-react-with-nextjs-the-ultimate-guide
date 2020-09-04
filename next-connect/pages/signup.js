@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import FormControl from "@material-ui/core/FormControl";
@@ -17,79 +18,151 @@ import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { signupUser } from "../lib/auth";
 
+function Transition(props) {
+	return <Slide direction="up" {...props} />
+}
+
 class Signup extends React.Component {
-  state = {
-	  name: '',
-	  email: '',
-	  password: ''
-  };
-
-  handleChange = event => {
-	  this.setState({
-		  [event.target.name]: event.target.value
-	  });
-  }
-
-  handleSubmit = event => {
-	const { name, email, password } = this.state;
-	event.preventDefault();
-	const user = {
-		name,
-		email,
-		password
+	state = {
+		name: '',
+		email: '',
+		password: '',
+		openError: false,
+		error: '',
+		createdUser: null,
+		openSuccess: false,
+		isLoading: false
 	};
 
-	signupUser(user);
-  }
+	handleChange = event => {
+		this.setState({
+			[event.target.name]: event.target.value
+		});
+	}
 
-  render() {
-	const { classes } = this.props;
+	handleSubmit = event => {
+		const { name, email, password } = this.state;
+		event.preventDefault();
+		const user = {
+			name,
+			email,
+			password
+		};
 
-	return <div className={classes.root}>
-	  <Paper className={classes.paper}>
-		<Avatar className={classes.avatar}>
-		  <Gavel />
-		</Avatar>
-		<Typography variant="h5" component="h1">Sign up</Typography>
+		this.setState({
+			isLoading: true,
+			error: ''
+		})
 
-		<form onSubmit={this.handleSubmit} className={classes.form}>
-		  <FormControl margin="normal" required fullWidth>
-			<InputLabel htmlFor="name">Name</InputLabel>
-			<Input
-			  name="name"
-			  type="text"
-			  onChange={this.handleChange}
-			/>
-		  </FormControl>
-		  <FormControl margin="normal" required fullWidth>
-			<InputLabel htmlFor="email">Email</InputLabel>
-			<Input
-			  name="email"
-			  type="email"
-			  onChange={this.handleChange}
-			/>
-		  </FormControl>
-		  <FormControl margin="normal" required fullWidth>
-			<InputLabel htmlFor="password">Password</InputLabel>
-			<Input
-			  name="password"
-			  type="password"
-			  onChange={this.handleChange}
-			/>
-		  </FormControl>
-		  <Button
-			  type="submit"
-			  fullWidth
-			  variant="contained"
-			  color="primary"
-			  className={classes.submit}
-		  >
-			  Sign up
-		  </Button>
-		</form>
-	  </Paper>
-	</div>;
-  }
+		signupUser(user)
+			.then(createdUser => {
+				this.setState({
+					createdUser,
+					error: '',
+					openError: false,
+					openSuccess: true,
+					isLoading: false
+				})
+			})
+			.catch(this.showError);
+	}
+
+	showError = err => {
+		const error = err.response && err.response.data || err.message;
+		this.setState({
+			openError: true,
+			error,
+			isLoading: false
+		})
+	}
+
+	handleClose = () => this.setState({ openError: false });
+
+	render() {
+		const { classes } = this.props;
+		const { error, openError, openSuccess, createdUser, isLoading } = this.state;
+
+		return <div className={classes.root}>
+			<Paper className={classes.paper}>
+				<Avatar className={classes.avatar}>
+				<Gavel />
+				</Avatar>
+				<Typography variant="h5" component="h1">Sign up</Typography>
+
+				<form onSubmit={this.handleSubmit} className={classes.form}>
+				<FormControl margin="normal" required fullWidth>
+					<InputLabel htmlFor="name">Name</InputLabel>
+					<Input
+					name="name"
+					type="text"
+					onChange={this.handleChange}
+					/>
+				</FormControl>
+				<FormControl margin="normal" required fullWidth>
+					<InputLabel htmlFor="email">Email</InputLabel>
+					<Input
+					name="email"
+					type="email"
+					onChange={this.handleChange}
+					/>
+				</FormControl>
+				<FormControl margin="normal" required fullWidth>
+					<InputLabel htmlFor="password">Password</InputLabel>
+					<Input
+					name="password"
+					type="password"
+					onChange={this.handleChange}
+					/>
+				</FormControl>
+				<Button
+					type="submit"
+					fullWidth
+					variant="contained"
+					color="primary"
+					className={classes.submit}
+					disabled={isLoading}
+				>
+					{isLoading ? 'Signing up...' : 'Sign up'}
+				</Button>
+				</form>
+
+				{/* Error Snackbar */}
+				<Snackbar
+					anchorOrigin={{
+						vertical: 'bottom',
+						horizontal: 'right'
+					}}
+					open={openError}
+					onClose={this.handleClose}
+					autoHideDuration={4000}
+					message={<span className={classes.snack}>{error}</span>}
+				/>
+			</Paper>
+
+			{/* Success Dialog */}
+			<Dialog
+				open={openSuccess}
+				disableBackdropClick={true}
+				TransitionComponent={Transition}
+			>
+				<DialogTitle>
+					<VerifiedUserTwoTone className={classes.icon} />
+				</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						User {createdUser ? createdUser.email : ''} successfully created!
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button color="primary" variant="contained">
+						<Link href="/signin">
+							<a className={classes.signinLink}>Sign in</a>
+						</Link>
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>;
+	}
 }
 
 const styles = theme => ({

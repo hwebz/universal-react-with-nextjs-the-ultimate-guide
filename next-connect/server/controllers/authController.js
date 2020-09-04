@@ -37,6 +37,7 @@ exports.signup = async (req, res, next) => {
 
     await User.register(user, password, (err, usr) => {
         if (err) {
+            console.log(err);
             return res.status(400).send(err.message);
         }
         res.json(usr);
