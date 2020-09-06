@@ -51,7 +51,7 @@ const NewPost = ({ classes, auth, text, image, isAddingPost, handleChange, handl
       <Button
         color="primary"
         variant="contained"
-        disable={!text || isAddingPost}
+        disabled={!text || isAddingPost}
         className={classes.submit}
         onClick={handleAddPost}
       >

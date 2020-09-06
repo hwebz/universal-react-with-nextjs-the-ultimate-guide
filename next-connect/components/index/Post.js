@@ -14,7 +14,7 @@ import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Link from 'next/link';
 
-class Post extends React.Component {
+class Post extends React.PureComponent {
   state = {
     isLiked: false,
     numLikes: 0,
@@ -31,7 +31,9 @@ class Post extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { post } = this.props;
+    console.log('props have been updated!');
     if (prevProps.post.likes.length !== post.likes.length) {
+      console.log('post likes have been updated!');
       this.setState({
         isLiked: this.checkLiked(post.likes),
         numLikes: post.likes.length
