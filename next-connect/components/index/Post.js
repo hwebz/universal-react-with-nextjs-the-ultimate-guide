@@ -1,23 +1,73 @@
-// import Badge from "@material-ui/core/Badge";
-// import Card from "@material-ui/core/Card";
-// import CardHeader from "@material-ui/core/CardHeader";
-// import CardContent from "@material-ui/core/CardContent";
-// import CardActions from "@material-ui/core/CardActions";
-// import Typography from "@material-ui/core/Typography";
-// import IconButton from "@material-ui/core/IconButton";
-// import Divider from "@material-ui/core/Divider";
-// import Avatar from "@material-ui/core/Avatar";
-// import Comment from "@material-ui/icons/Comment";
-// import DeleteTwoTone from "@material-ui/icons/DeleteTwoTone";
-// import Favorite from "@material-ui/icons/Favorite";
-// import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
+import Badge from "@material-ui/core/Badge";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Divider from "@material-ui/core/Divider";
+import Avatar from "@material-ui/core/Avatar";
+import Comment from "@material-ui/icons/Comment";
+import DeleteTwoTone from "@material-ui/icons/DeleteTwoTone";
+import Favorite from "@material-ui/icons/Favorite";
+import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Link from 'next/link';
 
 class Post extends React.Component {
   state = {};
 
   render() {
-    return <div>Post</div>;
+    const { classes, post, auth } = this.props;
+    const isPostedCreator = post.postedBy._id === auth.user._id;
+    
+    return <Card className={classes.card}>
+      {/* Post Header */}
+      <CardHeader
+        avatar={<Avatar src={post.postedBy.avatar} />}
+        action={
+          isPostedCreator && (
+            <IconButton>
+              <DeleteTwoTone color="secondary" />
+            </IconButton>
+          )
+        }
+        title={<Link href={`/profile/${post.postedBy._id}`}><a>{post.postedBy.name}</a></Link>}
+        subheader={post.createdAt}
+        className={classes.cardHeader}
+      />
+      <CardContent
+        className={classes.cardContent}
+      >
+        <Typography variant="body1" className={classes.text}>
+          {post.text}
+        </Typography>
+        {/* Post Image */}
+        {post.image && (
+          <div className={classes.imageContainer}>
+            <img className={classes.image} src={post.image} />
+          </div>
+        )}
+
+        {/* Post Actions */}
+        <CardActions>
+          <IconButton className={classes.button}>
+            <Badge badgeContent={0} color="secondary">
+              <FavoriteBorder className={classes.favoriteIcon} />
+            </Badge>
+          </IconButton>
+          <IconButton className={classes.button}>
+            <Badge badgeContent={0} color="primary">
+              <Comment className={classes.commentIcon} />
+            </Badge>
+          </IconButton>
+        </CardActions>
+
+        <Divider />
+
+        {/* Comments Area */}
+      </CardContent>
+    </Card>;
   }
 }
 

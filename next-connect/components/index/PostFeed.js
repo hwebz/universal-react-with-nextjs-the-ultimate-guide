@@ -3,7 +3,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 import NewPost from './NewPost';
 import Post from './Post';
-import { addPost, updateUser } from '../../lib/api';
+import { addPost, getPostFeed } from '../../lib/api';
 
 class PostFeed extends React.Component {
   state = {
@@ -15,6 +15,20 @@ class PostFeed extends React.Component {
 
   componentDidMount() {
     this.postData = new FormData();
+    this.getPosts();
+  }
+
+  getPosts = () => {
+    const { auth } = this.props;
+
+    getPostFeed(auth.user._id)
+      .then(posts => {
+        this.setState({
+          posts
+        })
+      }).catch(err => {
+        console.log(err);
+      });
   }
 
   handleChange = event => {
@@ -58,7 +72,7 @@ class PostFeed extends React.Component {
 
   render() {
     const { classes, auth } = this.props;
-    const { text, image, isAddingPost } = this.state;
+    const { text, image, isAddingPost, posts } = this.state;
 
     return <div className={classes.root}>
       <Typography variant="h4" component="h1" align="center" color="primary" className={classes.title}>
@@ -74,6 +88,13 @@ class PostFeed extends React.Component {
       />
 
       {/* Post List */}
+      {posts.map(post => (
+        <Post
+          key={post._id}
+          auth={auth}
+          post={post}
+        />
+      ))}
     </div>;
   }
 }
