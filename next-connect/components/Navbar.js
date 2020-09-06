@@ -39,7 +39,7 @@ const Navbar = ({ classes, router, pageProps: { auth } }) => {
 			  </ActiveLink>
 			</Button>
 			<Button>
-			  <ActiveLink href="signup">
+			  <ActiveLink href="/signup">
 				Sign up
 			  </ActiveLink>
 			</Button>

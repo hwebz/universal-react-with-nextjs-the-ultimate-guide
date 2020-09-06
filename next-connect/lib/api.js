@@ -12,3 +12,8 @@ export const followUser = async followId => {
 export const unfollowUser = async followId => {
     const { data } = await axios.put('/api/users/unfollow', { followId });
 }
+
+export const deleteUser = async authUserId => {
+    const { data } = await axios.delete(`/api/users/${authUserId}`);
+    return data;
+}
