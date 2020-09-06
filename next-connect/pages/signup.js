@@ -127,16 +127,18 @@ class Signup extends React.Component {
 				</form>
 
 				{/* Error Snackbar */}
-				<Snackbar
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'right'
-					}}
-					open={openError}
-					onClose={this.handleClose}
-					autoHideDuration={4000}
-					message={<span className={classes.snack}>{error}</span>}
-				/>
+				{error && (
+					<Snackbar
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'right'
+						}}
+						open={openError}
+						onClose={this.handleClose}
+						autoHideDuration={4000}
+						message={<span className={classes.snack}>{error}</span>}
+					/>
+				)}
 			</Paper>
 
 			{/* Success Dialog */}

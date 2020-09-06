@@ -18,7 +18,12 @@ import EditSharp from "@material-ui/icons/EditSharp";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { authInitialProps } from "../lib/auth";
 import { getAuthUser, updateUser } from "../lib/api";
+import Router from "next/router";
+import { Slide } from "@material-ui/core";
 
+function Transition(props) {
+	return <Slide direction="up" {...props} />
+}
 class EditProfile extends React.Component {
   state = {
     _id: '',
@@ -27,7 +32,12 @@ class EditProfile extends React.Component {
     avatar: '',
     about: '',
     avatarPreview: null,
-    isLoading: true
+    isLoading: true,
+    error: '',
+    openSuccess: false,
+    openError: false,
+    updatedUser: null,
+    isSaving: false
   };
 
   componentDidMount() {
@@ -67,15 +77,34 @@ class EditProfile extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
 
+    this.setState({
+      isSaving: true
+    });
+
     updateUser(this.state._id, this.userData)
       .then(updatedUser => {
-        console.log(updatedUser);
-      });
+        this.setState({
+          updatedUser,
+          openSuccess: true
+        });
+        setTimeout(() => Router.push(`/profile/${this.state._id}`), 6000);
+      }).catch(this.showError);
   }
+
+  showError = err => {
+		const error = err.response && err.response.data || err.message;
+		this.setState({
+			openError: true,
+			error,
+			isSaving: false
+		})
+	}
+
+	handleClose = () => this.setState({ openError: false });
 
   render() {
     const { classes } = this.props;
-    const { name, email, avatar, about, isLoading, avatarPreview } = this.state;
+    const { name, email, avatar, about, isLoading, avatarPreview, error, openSuccess, openError, updatedUser, isSaving } = this.state;
 
     return <div className={classes.root}>
         <Paper className={classes.paper}>
@@ -139,15 +168,46 @@ class EditProfile extends React.Component {
             <Button
               type="submit"
               fullWidth
-              disabled={isLoading}
+              disabled={isLoading || isSaving}
               variant="contained"
               color="primary"
               className={classes.submit}
             >
-              Save
+              {isSaving ? 'Saving...' : 'Save'}
             </Button>
           </form>
+
+          {/* Error Snackbar */}
+          {error && (
+            <Snackbar
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+              open={openError}
+              onClose={this.handleClose}
+              autoHideDuration={4000}
+              message={<span className={classes.snack}>{error}</span>}
+            />
+          )}
         </Paper>
+
+        {/* Success Dialog */}
+			<Dialog
+				open={openSuccess}
+				disableBackdropClick={true}
+				TransitionComponent={Transition}
+			>
+				<DialogTitle>
+					<VerifiedUserTwoTone className={classes.icon} />
+          Profile Updated
+				</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						User {updatedUser && updatedUser.name} successfully updated!
+					</DialogContentText>
+				</DialogContent>
+			</Dialog>
     </div>;
   }
 }
