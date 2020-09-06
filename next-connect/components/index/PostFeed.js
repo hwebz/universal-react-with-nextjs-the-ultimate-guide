@@ -3,7 +3,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 import NewPost from './NewPost';
 import Post from './Post';
-import { addPost, getPostFeed, deletePost } from '../../lib/api';
+import { addPost, getPostFeed, deletePost, likePost, unlikePost } from '../../lib/api';
 
 class PostFeed extends React.Component {
   state = {
@@ -79,7 +79,7 @@ class PostFeed extends React.Component {
 
     deletePost(post._id)
       .then(deletedPost => {
-        const postIndex = this.state.posts.findIndex(post => post._id === deletedPost._id);
+        const postIndex = posts.findIndex(post => post._id === deletedPost._id);
         const updatedPosts = [
           ...posts.slice(0, postIndex),
           ...posts.slice(postIndex + 1)
@@ -94,6 +94,29 @@ class PostFeed extends React.Component {
           isDeletingPost: false
         })
       });
+  }
+
+  handleToggleLike = post => {
+    const { posts } = this.state;
+    const { auth } = this.props;
+
+    const isPostLiked  = post.likes.includes(auth.user._id);
+    const sendRequest =  isPostLiked ? unlikePost : likePost;
+
+    sendRequest(post._id)
+      .then(postData => {
+        const postIndex = posts.findIndex(post => post._id === postData._id);
+        const updatedPosts = [
+          ...posts.slice(0, postIndex),
+          postData,
+          ...posts.slice(postIndex + 1)
+        ];
+        this.setState({
+          posts: updatedPosts
+        });
+      }).catch(err => {
+        console.log(err);
+      })
   }
 
   render() {
@@ -121,6 +144,7 @@ class PostFeed extends React.Component {
           post={post}
           isDeletingPost={isDeletingPost}
           handleDeletePost={this.handleDeletePost}
+          handleToggleLike={this.handleToggleLike}
         />
       ))}
     </div>;
