@@ -7,6 +7,7 @@ export const getUser = async userId => {
 
 export const followUser = async followId => {
     const { data } = await axios.put('/api/users/follow', { followId });
+    return data;
 }
 
 export const unfollowUser = async followId => {
@@ -25,5 +26,10 @@ export const getAuthUser = async authUserId => {
 
 export const updateUser = async (authUserId, userData) => {
     const { data } = await axios.put(`/api/users/${authUserId}`, userData);
+    return data;
+}
+
+export const getUserFeed = async authUserId => {
+    const { data } = await axios.get(`/api/users/feed/${authUserId}`);
     return data;
 }

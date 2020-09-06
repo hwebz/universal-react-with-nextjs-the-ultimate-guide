@@ -5,13 +5,31 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { authInitialProps } from "../lib/auth";
+import PostFeed from '../components/index/PostFeed';
+import UserFeed from '../components/index/UserFeed';
 import Router from "next/router";
 
 const Index = ({ classes, auth }) => (
   <main className={classes.root}>
     {auth.user && auth.user._id ? (
         // Auth User Page
-        <div>Auth User Page</div>
+        <Grid container>
+          <Grid item xs={12} sm={12} md={7}>
+            <PostFeed />
+          </Grid>
+          <Grid item className={classes.drawerContainer}>
+            <Drawer
+              className={classes.drawer}
+              variant="permanent"
+              anchor="right"
+              classes={{
+                paper: classes.drawerPaper
+              }}
+            >
+              <UserFeed auth={auth} />
+            </Drawer>
+          </Grid>
+        </Grid>
     ): (
       // Splash Page (UnAuth Page)
       <Grid
