@@ -63,3 +63,8 @@ export const addComment = async (postId, comment) => {
     const { data } = await axios.put(`/api/posts/comment`, { postId, comment });
     return data;
 }
+
+export const deleteComment = async (postId, comment) => {
+    const { data } = await axios.put(`/api/posts/uncomment`, { postId, comment });
+    return data;
+}

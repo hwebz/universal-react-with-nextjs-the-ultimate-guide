@@ -13,7 +13,7 @@ class Comments extends React.Component {
   };
 
   showComment = comment => {
-    const { postId, auth, classes, handleAddComment } = this.props;
+    const { postId, auth, classes, handleDeleteComment } = this.props;
     const { text } = this.state;
     const isCommentCreator = comment.postedBy._id === auth.user._id;
 
@@ -29,6 +29,7 @@ class Comments extends React.Component {
           <Delete 
             color="secondary"
             className={classes.commentDelete}
+            onClick={() => handleDeleteComment(postId, comment)}
           />
         )}
       </div>
@@ -78,6 +79,7 @@ class Comments extends React.Component {
       {/* Comments */}
       {comments.map(comment => (
         <CardHeader
+          key={comment._id}
           avatar={<Avatar className={classes.smallAvatar} src={comment.postedBy.avatar} />}
           title={this.showComment(comment)}
           className={classes.cardHeader}

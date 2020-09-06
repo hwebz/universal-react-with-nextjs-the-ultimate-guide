@@ -54,7 +54,7 @@ class Post extends React.PureComponent {
 
   render() {
     const { isLiked, numLikes, comments } = this.state;
-    const { classes, post, auth, isDeletingPost, handleDeletePost, handleToggleLike, handleAddComment } = this.props;
+    const { classes, post, auth, isDeletingPost, handleDeletePost, handleToggleLike, handleAddComment, handleDeleteComment } = this.props;
     const isPostedCreator = post.postedBy._id === auth.user._id;
     
     return <Card className={classes.card}>
@@ -115,6 +115,7 @@ class Post extends React.PureComponent {
           postId={post._id}
           comments={comments}
           handleAddComment={handleAddComment}
+          handleDeleteComment={handleDeleteComment}
         />
       </CardContent>
     </Card>;
