@@ -5,14 +5,40 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { authInitialProps } from "../lib/auth";
+import Router from "next/router";
 
-class Index extends React.Component {
-  state = {};
-
-  render() {
-    return <div>Index</div>;
-  }
-}
+const Index = ({ classes, auth }) => (
+  <main className={classes.root}>
+    {auth.user && auth.user._id ? (
+        // Auth User Page
+        <div>Auth User Page</div>
+    ): (
+      // Splash Page (UnAuth Page)
+      <Grid
+        justify="center"
+        alignItems="center"
+        direction="row"
+        container
+        className={classes.heroContent}
+      >
+        <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+          A Better Social Network
+        </Typography>
+        <Typography variant="h6" align="center" color="textSecondary" component="p">
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+        </Typography>
+        <Button
+          className={classes.fabButton}
+          variant="extendedFab"
+          color="primary"
+          onClick={() => Router.push('/signup')}
+        >
+          Get started
+        </Button>
+      </Grid>
+    )}
+  </main>
+)
 
 const styles = theme => ({
   root: {
@@ -52,6 +78,6 @@ const styles = theme => ({
   }
 });
 
-Index.getInitialProps = authInitialProps(true);
+Index.getInitialProps = authInitialProps();
 
 export default withStyles(styles)(Index);
