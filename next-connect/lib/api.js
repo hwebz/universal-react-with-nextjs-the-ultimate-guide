@@ -17,3 +17,8 @@ export const deleteUser = async authUserId => {
     const { data } = await axios.delete(`/api/users/${authUserId}`);
     return data;
 }
+
+export const getAuthUser = async authUserId => {
+    const { data } = await axios.get(`/api/users/${authUserId}`);
+    return data;
+}

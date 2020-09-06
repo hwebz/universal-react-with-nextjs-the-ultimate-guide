@@ -17,12 +17,111 @@ import FaceTwoTone from "@material-ui/icons/FaceTwoTone";
 import EditSharp from "@material-ui/icons/EditSharp";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { authInitialProps } from "../lib/auth";
+import { getAuthUser } from "../lib/api";
 
 class EditProfile extends React.Component {
-  state = {};
+  state = {
+    _id: '',
+    name: '',
+    email: '',
+    avatar: '',
+    about: '',
+    isLoading: true
+  };
+
+  componentDidMount() {
+    const { auth } = this.props;
+    
+    getAuthUser(auth.user._id)
+      .then(user => {
+          this.setState({
+            ...user,
+            isLoading: false
+          })
+      }).catch(err => {
+        console.log(err);
+        this.setState({
+          isLoading: false
+        })
+      })
+  }
 
   render() {
-    return <div>EditProfile</div>;
+    const { classes } = this.props;
+    const { name, email, avatar, about, isLoading } = this.state;
+
+    return <div className={classes.root}>
+        <Paper className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <EditSharp />
+          </Avatar>
+          <Typography variant="h5" component="h1">
+            Edit Profile
+          </Typography>
+
+          {/* Edit Profile Form */}
+          <form className={classes.form}>
+            {isLoading ? (
+              <Avatar className={classes.bigAvatar}>
+                <FaceTwoTone />
+              </Avatar>
+            ) : (
+              <Avatar src={avatar} className={classes.bigAvatar} />
+            )}
+            <input
+              type="file"
+              name="avatar"
+              id="avatar"
+              accept="image/*"
+              onChange={this.handleChange}
+              className={classes.input}
+            />
+            <label htmlFor="avatar" className={classes.uploadButton}>
+              <Button variant="contained" color="secondary" component="span">
+                Upload Image <CloudUpload />
+              </Button>
+            </label>
+            <span className={classes.filename}>{avatar && avatar.name}</span>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="name">Name</InputLabel>
+              <Input
+                type="text"
+                name="name"
+                value={name}
+                onChange={this.handleChange}
+              />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="email">Email</InputLabel>
+              <Input
+                type="email"
+                name="email"
+                value={email}
+                onChange={this.handleChange}
+              />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="about">About</InputLabel>
+              <Input
+                type="text"
+                name="about"
+                value={about}
+                onChange={this.handleChange}
+              />
+            </FormControl>
+            <Button
+              type="submit"
+              fullWidth
+              disabled={isLoading}
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Save
+            </Button>
+          </form>
+        </Paper>
+    </div>;
   }
 }
 
