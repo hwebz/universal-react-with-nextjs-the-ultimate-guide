@@ -3,7 +3,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 import NewPost from './NewPost';
 import Post from './Post';
-import { addPost, getPostFeed, deletePost, likePost, unlikePost } from '../../lib/api';
+import { addPost, getPostFeed, deletePost, likePost, unlikePost, addComment } from '../../lib/api';
 
 class PostFeed extends React.Component {
   state = {
@@ -116,7 +116,26 @@ class PostFeed extends React.Component {
         });
       }).catch(err => {
         console.log(err);
-      })
+      });
+  }
+
+  handleAddComment = (postId, text) => {
+    const { posts } = this.state;
+    const comment = { text };
+    addComment(postId, comment)
+      .then(postData => {
+        const postIndex = posts.findIndex(post => post._id === postData._id);
+        const updatedPosts = [
+          ...posts.slice(0, postIndex),
+          postData,
+          ...posts.slice(postIndex + 1)
+        ];
+        this.setState({
+          posts: updatedPosts
+        });
+      }).catch(err => {
+        console.log(err);
+      });
   }
 
   render() {
@@ -145,6 +164,7 @@ class PostFeed extends React.Component {
           isDeletingPost={isDeletingPost}
           handleDeletePost={this.handleDeletePost}
           handleToggleLike={this.handleToggleLike}
+          handleAddComment={this.handleAddComment}
         />
       ))}
     </div>;

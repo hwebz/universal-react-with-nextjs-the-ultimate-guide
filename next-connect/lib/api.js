@@ -58,3 +58,8 @@ export const unlikePost = async postId => {
     const { data } = await axios.put(`/api/posts/unlike`, { postId });
     return data;
 }
+
+export const addComment = async (postId, comment) => {
+    const { data } = await axios.put(`/api/posts/comment`, { postId, comment });
+    return data;
+}

@@ -27,7 +27,8 @@ class Post extends React.PureComponent {
     const { post } = this.props;
     this.setState({
       isLiked: this.checkLiked(post.likes),
-      numLikes: post.likes.length
+      numLikes: post.likes.length,
+      comments: post.comments
     });
   }
 
@@ -41,13 +42,19 @@ class Post extends React.PureComponent {
         numLikes: post.likes.length
       });
     }
+
+    if (prevProps.post.comments.length !== post.comments.length) {
+      this.setState({
+        comments: post.comments
+      })
+    }
   }
 
   checkLiked = likes => likes.includes(this.props.auth.user._id);
 
   render() {
     const { isLiked, numLikes, comments } = this.state;
-    const { classes, post, auth, isDeletingPost, handleDeletePost, handleToggleLike } = this.props;
+    const { classes, post, auth, isDeletingPost, handleDeletePost, handleToggleLike, handleAddComment } = this.props;
     const isPostedCreator = post.postedBy._id === auth.user._id;
     
     return <Card className={classes.card}>
@@ -107,6 +114,7 @@ class Post extends React.PureComponent {
           auth={auth}
           postId={post._id}
           comments={comments}
+          handleAddComment={handleAddComment}
         />
       </CardContent>
     </Card>;
