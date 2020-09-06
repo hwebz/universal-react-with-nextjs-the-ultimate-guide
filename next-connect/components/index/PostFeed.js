@@ -3,14 +3,15 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 import NewPost from './NewPost';
 import Post from './Post';
-import { addPost, getPostFeed } from '../../lib/api';
+import { addPost, getPostFeed, deletePost } from '../../lib/api';
 
 class PostFeed extends React.Component {
   state = {
     posts: [],
     text: '',
     image: '',
-    isAddingPost: false
+    isAddingPost: false,
+    isDeletingPost: false
   };
 
   componentDidMount() {
@@ -70,9 +71,34 @@ class PostFeed extends React.Component {
       })
   }
 
+  handleDeletePost = post => {
+    const { posts } = this.state;
+    this.setState({
+      isDeletingPost: true
+    });
+
+    deletePost(post._id)
+      .then(deletedPost => {
+        const postIndex = this.state.posts.findIndex(post => post._id === deletedPost._id);
+        const updatedPosts = [
+          ...posts.slice(0, postIndex),
+          ...posts.slice(postIndex + 1)
+        ];
+        this.setState({
+          isDeletingPost: false,
+          posts: updatedPosts
+        })
+      }).catch(err => {
+        console.log(err);
+        this.setState({
+          isDeletingPost: false
+        })
+      });
+  }
+
   render() {
     const { classes, auth } = this.props;
-    const { text, image, isAddingPost, posts } = this.state;
+    const { text, image, isAddingPost, posts, isDeletingPost } = this.state;
 
     return <div className={classes.root}>
       <Typography variant="h4" component="h1" align="center" color="primary" className={classes.title}>
@@ -93,6 +119,8 @@ class PostFeed extends React.Component {
           key={post._id}
           auth={auth}
           post={post}
+          isDeletingPost={isDeletingPost}
+          handleDeletePost={this.handleDeletePost}
         />
       ))}
     </div>;
