@@ -15,7 +15,7 @@ const Index = ({ classes, auth }) => (
         // Auth User Page
         <Grid container>
           <Grid item xs={12} sm={12} md={7}>
-            <PostFeed />
+            <PostFeed auth={auth} />
           </Grid>
           <Grid item className={classes.drawerContainer}>
             <Drawer
