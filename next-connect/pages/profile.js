@@ -12,17 +12,19 @@ import Divider from "@material-ui/core/Divider";
 import Edit from "@material-ui/icons/Edit";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { authInitialProps } from "../lib/auth";
-import { getUser } from '../lib/api';
+import { getUser, getPostsByUser } from '../lib/api';
 import Link from 'next/link';
 import FollowUser from "../components/profile/FollowUser";
 import DeleteUser from "../components/profile/DeleteUser";
+import ProfileTabs from '../components/profile/ProfileTabs'
 
 class Profile extends React.Component {
   state = {
     user: null,
     isAuth: false,
     isLoading: true,
-    isFollowing: false
+    isFollowing: false,
+    posts: []
   };
 
   componentDidMount() {
@@ -30,14 +32,16 @@ class Profile extends React.Component {
     const isAuth = auth.user._id === userId;
 
     getUser(userId)
-      .then(user => {
+      .then(async user => {
         const isFollowing = this.checkFollow(auth, user);
-        
+        const posts = await getPostsByUser(userId);
+
         this.setState({
           user,
           isAuth,
           isFollowing,
-          isLoading: false
+          isLoading: false,
+          posts
         })
       });
   }
@@ -58,8 +62,8 @@ class Profile extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const { isLoading, user, isAuth, isFollowing } = this.state;
+    const { classes, auth } = this.props;
+    const { isLoading, user, isAuth, isFollowing, posts } = this.state;
 
     return <div>
       <Paper className={classes.root} elevation={4}>
@@ -111,6 +115,13 @@ class Profile extends React.Component {
             <ListItem>
               <ListItemText primary={user.about} secondary={`Joined: ${user.createdAt}`} />
             </ListItem>
+
+            {/* Display User's Posts, Following and Followers */}
+            <ProfileTabs
+              auth={auth}
+              posts={posts}
+              user={user}
+            />
           </List>
         )}
       </Paper>
