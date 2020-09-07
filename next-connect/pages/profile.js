@@ -12,7 +12,7 @@ import Divider from "@material-ui/core/Divider";
 import Edit from "@material-ui/icons/Edit";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { authInitialProps } from "../lib/auth";
-import { getUser, getPostsByUser } from '../lib/api';
+import { getUser, getPostsByUser, likePost, unlikePost, addComment, deleteComment, deletePost } from '../lib/api';
 import Link from 'next/link';
 import FollowUser from "../components/profile/FollowUser";
 import DeleteUser from "../components/profile/DeleteUser";
@@ -24,7 +24,8 @@ class Profile extends React.Component {
     isAuth: false,
     isLoading: true,
     isFollowing: false,
-    posts: []
+    posts: [],
+    isDeletingPost: false
   };
 
   componentDidMount() {
@@ -61,9 +62,147 @@ class Profile extends React.Component {
     })
   }
 
+  getPosts = () => {
+    const { auth } = this.props;
+
+    getPostFeed(auth.user._id)
+      .then(posts => {
+        this.setState({
+          posts
+        })
+      }).catch(err => {
+        console.log(err);
+      });
+  }
+
+  handleChange = event => {
+    let inputValue;
+
+    if (event.target.name === "image") {
+      inputValue = event.target.files[0];
+    } else {
+      inputValue = event.target.value;
+    }
+
+    this.postData.set(event.target.name, inputValue);
+    this.setState({ [event.target.name]: inputValue });
+  }
+
+  handleAddPost = () => {
+    const { auth } = this.props;
+    this.setState({
+      isAddingPost: true
+    });
+
+    addPost(auth.user._id, this.postData)
+      .then(post => {
+        const updatedPosts = [post, ...this.state.posts];
+
+        this.setState({
+          posts: updatedPosts,
+          isAddingPost: false,
+          text: '',
+          image: ''
+        });
+
+        this.postData.delete('image');
+      }).catch(err => {
+        console.log(err);
+        this.setState({
+          isAddingPost: false
+        })
+      })
+  }
+
+  handleDeletePost = post => {
+    const { posts } = this.state;
+    this.setState({
+      isDeletingPost: true
+    });
+
+    deletePost(post._id)
+      .then(deletedPost => {
+        const postIndex = posts.findIndex(post => post._id === deletedPost._id);
+        const updatedPosts = [
+          ...posts.slice(0, postIndex),
+          ...posts.slice(postIndex + 1)
+        ];
+        this.setState({
+          isDeletingPost: false,
+          posts: updatedPosts
+        })
+      }).catch(err => {
+        console.log(err);
+        this.setState({
+          isDeletingPost: false
+        })
+      });
+  }
+
+  handleToggleLike = post => {
+    const { posts } = this.state;
+    const { auth } = this.props;
+
+    const isPostLiked  = post.likes.includes(auth.user._id);
+    const sendRequest =  isPostLiked ? unlikePost : likePost;
+
+    sendRequest(post._id)
+      .then(postData => {
+        const postIndex = posts.findIndex(post => post._id === postData._id);
+        const updatedPosts = [
+          ...posts.slice(0, postIndex),
+          postData,
+          ...posts.slice(postIndex + 1)
+        ];
+        this.setState({
+          posts: updatedPosts
+        });
+      }).catch(err => {
+        console.log(err);
+      });
+  }
+
+  handleAddComment = (postId, text) => {
+    const { posts } = this.state;
+    const comment = { text };
+    addComment(postId, comment)
+      .then(postData => {
+        const postIndex = posts.findIndex(post => post._id === postData._id);
+        const updatedPosts = [
+          ...posts.slice(0, postIndex),
+          postData,
+          ...posts.slice(postIndex + 1)
+        ];
+        this.setState({
+          posts: updatedPosts
+        });
+      }).catch(err => {
+        console.log(err);
+      });
+  }
+
+  handleDeleteComment = (postId, comment) => {
+    const { posts } = this.state;
+    
+    deleteComment(postId,  comment)
+      .then(postData => {
+        const postIndex = posts.findIndex(post => post._id === postData._id);
+        const updatedPosts = [
+          ...posts.slice(0, postIndex),
+          postData,
+          ...posts.slice(postIndex + 1)
+        ];
+        this.setState({
+          posts: updatedPosts
+        });
+      }).catch(err => {
+        console.log(err);
+      });
+  }
+
   render() {
     const { classes, auth } = this.props;
-    const { isLoading, user, isAuth, isFollowing, posts } = this.state;
+    const { isLoading, user, isAuth, isFollowing, posts, isDeletingPost } = this.state;
 
     return <div>
       <Paper className={classes.root} elevation={4}>
@@ -121,6 +260,11 @@ class Profile extends React.Component {
               auth={auth}
               posts={posts}
               user={user}
+              isDeletingPost={isDeletingPost}
+              handleDeletePost={this.handleDeletePost}
+              handleToggleLike={this.handleToggleLike}
+              handleAddComment={this.handleAddComment}
+              handleDeleteComment={this.handleDeleteComment}
             />
           </List>
         )}
