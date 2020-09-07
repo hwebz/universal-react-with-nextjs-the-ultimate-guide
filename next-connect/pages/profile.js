@@ -16,7 +16,8 @@ import { getUser, getPostsByUser, likePost, unlikePost, addComment, deleteCommen
 import Link from 'next/link';
 import FollowUser from "../components/profile/FollowUser";
 import DeleteUser from "../components/profile/DeleteUser";
-import ProfileTabs from '../components/profile/ProfileTabs'
+import ProfileTabs from '../components/profile/ProfileTabs';
+import format from 'date-fns/format';
 
 class Profile extends React.Component {
   state = {
@@ -200,6 +201,8 @@ class Profile extends React.Component {
       });
   }
 
+  formatDate = date => format(date, "dddd, MMMM Do, YYYY"); 
+
   render() {
     const { classes, auth } = this.props;
     const { isLoading, user, isAuth, isFollowing, posts, isDeletingPost } = this.state;
@@ -252,7 +255,7 @@ class Profile extends React.Component {
             </ListItem>
             <Divider />
             <ListItem>
-              <ListItemText primary={user.about} secondary={`Joined: ${user.createdAt}`} />
+              <ListItemText primary={user.about} secondary={`Joined: ${this.formatDate(user.createdAt)}`} />
             </ListItem>
 
             {/* Display User's Posts, Following and Followers */}

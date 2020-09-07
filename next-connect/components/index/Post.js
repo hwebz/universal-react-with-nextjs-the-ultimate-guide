@@ -13,6 +13,7 @@ import Favorite from "@material-ui/icons/Favorite";
 import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Link from 'next/link';
+import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 
 import Comments from './Comments';
 
@@ -52,6 +53,11 @@ class Post extends React.PureComponent {
 
   checkLiked = likes => likes.includes(this.props.auth.user._id);
 
+  formatTimeCreated = time => distanceInWordsToNow(time, {
+    includeSeconds: true,
+    addSuffix: true
+  }); 
+
   render() {
     const { isLiked, numLikes, comments } = this.state;
     const { classes, post, auth, isDeletingPost, handleDeletePost, handleToggleLike, handleAddComment, handleDeleteComment } = this.props;
@@ -72,7 +78,7 @@ class Post extends React.PureComponent {
           )
         }
         title={<Link href={`/profile/${post.postedBy._id}`}><a>{post.postedBy.name}</a></Link>}
-        subheader={post.createdAt}
+        subheader={this.formatTimeCreated(post.createdAt)}
         className={classes.cardHeader}
       />
       <CardContent
